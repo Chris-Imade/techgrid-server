@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Grid Series - Admin Dashboard</title>
+    <link rel="stylesheet" href="/dashboard/static/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-chart-line"></i> TechGrid Dashboard</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="menu-item active" data-section="overview">
+                    <i class="fas fa-tachometer-alt"></i> Overview
+                </li>
+                <li class="menu-item" data-section="contacts">
+                    <i class="fas fa-envelope"></i> Contacts
+                    <span class="count" id="contacts-count">0</span>
+                </li>
+                <li class="menu-item" data-section="registrations">
+                    <i class="fas fa-users"></i> Registrations
+                    <span class="count" id="registrations-count">0</span>
+                </li>
+                <li class="menu-item" data-section="newsletter">
+                    <i class="fas fa-newspaper"></i> Newsletter
+                    <span class="count" id="newsletter-count">0</span>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="content-header">
+                <h1 id="page-title">Dashboard Overview</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="refreshData()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <span class="last-updated">Last updated: <span id="last-updated-time">--</span></span>
+                </div>
+            </header>
+
+            <!-- Overview Section -->
+            <section id="overview-section" class="content-section active">
+                <div class="stats-grid">
+                    <div class="stat-card contacts">
+                        <div class="stat-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="total-contacts">0</h3>
+                            <p>Total Contacts</p>
+                            <div class="stat-breakdown">
+                                <span>Pending: <strong id="pending-contacts">0</strong></span>
+                                <span>Processed: <strong id="processed-contacts">0</strong></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card registrations">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="total-registrations">0</h3>
+                            <p>Total Registrations</p>
+                            <div class="stat-breakdown">
+                                <span>Registered: <strong id="registered-count">0</strong></span>
+                                <span>Confirmed: <strong id="confirmed-count">0</strong></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card newsletter">
+                        <div class="stat-icon">
+                            <i class="fas fa-newspaper"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="total-newsletter">0</h3>
+                            <p>Newsletter Subscribers</p>
+                            <div class="stat-breakdown">
+                                <span>Active: <strong id="active-subscribers">0</strong></span>
+                                <span>Unsubscribed: <strong id="unsubscribed-count">0</strong></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card emails">
+                        <div class="stat-icon">
+                            <i class="fas fa-paper-plane"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="total-emails">0</h3>
+                            <p>Emails Sent</p>
+                            <div class="stat-breakdown">
+                                <span>Confirmations: <strong id="confirmations-sent">0</strong></span>
+                                <span>Welcomes: <strong id="welcomes-sent">0</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-activity">
+                    <h2>Recent Activity</h2>
+                    <div class="activity-grid">
+                        <div class="activity-card">
+                            <h3>Recent Contacts</h3>
+                            <div id="recent-contacts" class="activity-list"></div>
+                        </div>
+                        <div class="activity-card">
+                            <h3>Recent Registrations</h3>
+                            <div id="recent-registrations" class="activity-list"></div>
+                        </div>
+                        <div class="activity-card">
+                            <h3>Recent Subscriptions</h3>
+                            <div id="recent-newsletter" class="activity-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contacts Section -->
+            <section id="contacts-section" class="content-section">
+                <div class="section-header">
+                    <h2>Contact Form Submissions</h2>
+                    <div class="section-actions">
+                        <div class="search-box">
+                            <input type="text" id="contacts-search" placeholder="Search contacts...">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <select id="contacts-status-filter">
+                            <option value="">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="processed">Processed</option>
+                            <option value="responded">Responded</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table id="contacts-table" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Subject</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="contacts-tbody">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination" id="contacts-pagination"></div>
+            </section>
+
+            <!-- Registrations Section -->
+            <section id="registrations-section" class="content-section">
+                <div class="section-header">
+                    <h2>Conference Registrations</h2>
+                    <div class="section-actions">
+                        <div class="search-box">
+                            <input type="text" id="registrations-search" placeholder="Search registrations...">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <select id="registrations-status-filter">
+                            <option value="">All Status</option>
+                            <option value="registered">Registered</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="attended">Attended</option>
+                        </select>
+                        <select id="registrations-experience-filter">
+                            <option value="">All Experience</option>
+                            <option value="beginner">Beginner</option>
+                            <option value="intermediate">Intermediate</option>
+                            <option value="advanced">Advanced</option>
+                            <option value="expert">Expert</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table id="registrations-table" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Reg. Number</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Company</th>
+                                <th>Experience</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="registrations-tbody">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination" id="registrations-pagination"></div>
+            </section>
+
+            <!-- Newsletter Section -->
+            <section id="newsletter-section" class="content-section">
+                <div class="section-header">
+                    <h2>Newsletter Subscriptions</h2>
+                    <div class="section-actions">
+                        <div class="search-box">
+                            <input type="text" id="newsletter-search" placeholder="Search subscribers...">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <select id="newsletter-status-filter">
+                            <option value="">All Status</option>
+                            <option value="subscribed">Subscribed</option>
+                            <option value="unsubscribed">Unsubscribed</option>
+                        </select>
+                        <select id="newsletter-active-filter">
+                            <option value="">All</option>
+                            <option value="true">Active</option>
+                            <option value="false">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table id="newsletter-table" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Active</th>
+                                <th>Source</th>
+                                <th>Subscribed Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="newsletter-tbody">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination" id="newsletter-pagination"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading...</p>
+        </div>
+    </div>
+
+    <!-- Modal for editing records -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Edit Record</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Dynamic form content will be inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveRecord()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content small">
+            <div class="modal-header">
+                <h3>Confirm Action</h3>
+                <button class="modal-close" onclick="closeConfirmModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirm-message">Are you sure you want to perform this action?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeConfirmModal()">Cancel</button>
+                <button class="btn btn-danger" onclick="confirmAction()">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/dashboard/static/script.js"></script>
+</body>
+</html>

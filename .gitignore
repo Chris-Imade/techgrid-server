@@ -1,0 +1,12 @@
+/node_modules
+
+# dependencies for development
+/.env
+/.env.example
+/.npmrc
+
+# production
+*.log
+*.sqlite
+*.db
+*.sqlite-wal
