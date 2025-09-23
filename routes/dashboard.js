@@ -7,17 +7,54 @@ const logger = require('../utils/logger');
 
 const router = express.Router();
 
-// Serve static dashboard files
-router.use('/static', express.static(path.join(__dirname, '../public/dashboard')));
-
 // Dashboard home page
 router.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/dashboard/index.html'));
 });
 
+// Serve static dashboard files
+router.get('/static/style.css', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/dashboard/style.css'));
+});
+
+router.get('/static/script.js', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/dashboard/script.js'));
+});
+
 // API Routes for dashboard data management
 
 // ============= CONTACTS =============
+
+// Create new contact
+router.post('/api/contacts', async (req, res) => {
+  try {
+    const { name, email, phone, subject, message, status } = req.body;
+
+    const contactData = {
+      name,
+      email,
+      phone,
+      subject,
+      message,
+      status: status || 'pending',
+      metadata: {
+        timestamp: new Date(),
+        userAgent: req.get('User-Agent') || '',
+        ipAddress: req.ip || req.connection.remoteAddress || '',
+        source: 'dashboard_manual'
+      }
+    };
+
+    const contact = new Contact(contactData);
+    await contact.save();
+
+    logger.info(`New contact created via dashboard: ${contact.contactId}`);
+    res.status(201).json({ success: true, data: contact });
+  } catch (error) {
+    logger.error('Dashboard contact creation error:', error);
+    res.status(500).json({ success: false, message: 'Failed to create contact' });
+  }
+});
 
 // Get all contacts with pagination
 router.get('/api/contacts', async (req, res) => {
@@ -123,6 +160,56 @@ router.delete('/api/contacts/:id', async (req, res) => {
 });
 
 // ============= REGISTRATIONS =============
+
+// Create new registration
+router.post('/api/registrations', async (req, res) => {
+  try {
+    const {
+      firstName, lastName, email, phone, company, jobTitle,
+      experience, interests, expectations, newsletter, terms
+    } = req.body;
+
+    // Check for duplicate registration
+    const existingRegistration = await Registration.findOne({ email });
+    if (existingRegistration) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email address is already registered for this event'
+      });
+    }
+
+    const registrationData = {
+      firstName,
+      lastName,
+      email,
+      phone,
+      company: company || '',
+      jobTitle: jobTitle || '',
+      experience,
+      interests: interests || [],
+      expectations: expectations || '',
+      newsletter: newsletter || false,
+      terms: terms !== undefined ? terms : true,
+      metadata: {
+        timestamp: new Date(),
+        userAgent: req.get('User-Agent') || '',
+        ipAddress: req.ip || req.connection.remoteAddress || '',
+        source: 'dashboard_manual',
+        eventId: process.env.EVENT_ID || 'tech_grid_ai_finance_2025',
+        status: 'registered'
+      }
+    };
+
+    const registration = new Registration(registrationData);
+    await registration.save();
+
+    logger.info(`New registration created via dashboard: ${registration.registrationId}`);
+    res.status(201).json({ success: true, data: registration });
+  } catch (error) {
+    logger.error('Dashboard registration creation error:', error);
+    res.status(500).json({ success: false, message: 'Failed to create registration' });
+  }
+});
 
 // Get all registrations with pagination
 router.get('/api/registrations', async (req, res) => {
@@ -283,6 +370,45 @@ router.delete('/api/registrations/:id', async (req, res) => {
 });
 
 // ============= NEWSLETTER =============
+
+// Create new newsletter subscription
+router.post('/api/newsletter', async (req, res) => {
+  try {
+    const { email, isActive, preferences } = req.body;
+
+    // Check for duplicate subscription
+    const existingSubscription = await Newsletter.findOne({ email: email.toLowerCase() });
+    if (existingSubscription) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email address is already subscribed to newsletter'
+      });
+    }
+
+    const subscriptionData = {
+      email: email.toLowerCase(),
+      isActive: isActive !== undefined ? isActive : true,
+      preferences: preferences || { frequency: 'weekly' },
+      metadata: {
+        timestamp: new Date(),
+        userAgent: req.get('User-Agent') || '',
+        ipAddress: req.ip || req.connection.remoteAddress || '',
+        source: 'dashboard_manual',
+        sourcePage: 'dashboard',
+        status: 'subscribed'
+      }
+    };
+
+    const subscription = new Newsletter(subscriptionData);
+    await subscription.save();
+
+    logger.info(`New newsletter subscription created via dashboard: ${subscription.subscriptionId}`);
+    res.status(201).json({ success: true, data: subscription });
+  } catch (error) {
+    logger.error('Dashboard newsletter creation error:', error);
+    res.status(500).json({ success: false, message: 'Failed to create newsletter subscription' });
+  }
+});
 
 // Get all newsletter subscriptions with pagination
 router.get('/api/newsletter', async (req, res) => {

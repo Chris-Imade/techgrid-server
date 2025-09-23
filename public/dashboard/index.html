@@ -16,18 +16,26 @@
             </div>
             <ul class="sidebar-menu">
                 <li class="menu-item active" data-section="overview">
-                    <i class="fas fa-tachometer-alt"></i> Overview
+                    <div class="menu-item-content">
+                        <i class="fas fa-tachometer-alt"></i> Overview
+                    </div>
                 </li>
                 <li class="menu-item" data-section="contacts">
-                    <i class="fas fa-envelope"></i> Contacts
+                    <div class="menu-item-content">
+                        <i class="fas fa-envelope"></i> Contacts
+                    </div>
                     <span class="count" id="contacts-count">0</span>
                 </li>
                 <li class="menu-item" data-section="registrations">
-                    <i class="fas fa-users"></i> Registrations
+                    <div class="menu-item-content">
+                        <i class="fas fa-users"></i> Registrations
+                    </div>
                     <span class="count" id="registrations-count">0</span>
                 </li>
                 <li class="menu-item" data-section="newsletter">
-                    <i class="fas fa-newspaper"></i> Newsletter
+                    <div class="menu-item-content">
+                        <i class="fas fa-newspaper"></i> Newsletter
+                    </div>
                     <span class="count" id="newsletter-count">0</span>
                 </li>
             </ul>
@@ -130,6 +138,9 @@
                 <div class="section-header">
                     <h2>Contact Form Submissions</h2>
                     <div class="section-actions">
+                        <button class="btn btn-success" onclick="addNewRecord('contacts')">
+                            <i class="fas fa-plus"></i> Add New Contact
+                        </button>
                         <div class="search-box">
                             <input type="text" id="contacts-search" placeholder="Search contacts...">
                             <i class="fas fa-search"></i>
@@ -167,6 +178,9 @@
                 <div class="section-header">
                     <h2>Conference Registrations</h2>
                     <div class="section-actions">
+                        <button class="btn btn-success" onclick="addNewRecord('registrations')">
+                            <i class="fas fa-plus"></i> Add New Registration
+                        </button>
                         <div class="search-box">
                             <input type="text" id="registrations-search" placeholder="Search registrations...">
                             <i class="fas fa-search"></i>
@@ -213,6 +227,9 @@
                 <div class="section-header">
                     <h2>Newsletter Subscriptions</h2>
                     <div class="section-actions">
+                        <button class="btn btn-success" onclick="addNewRecord('newsletter')">
+                            <i class="fas fa-plus"></i> Add New Subscriber
+                        </button>
                         <div class="search-box">
                             <input type="text" id="newsletter-search" placeholder="Search subscribers...">
                             <i class="fas fa-search"></i>

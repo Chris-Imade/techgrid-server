@@ -2,13 +2,12 @@ const express = require('express');
 const Registration = require('../models/Registration');
 const Newsletter = require('../models/Newsletter');
 const emailService = require('../services/emailService');
-const { registrationValidation, sanitizeInput, registrationRateLimit } = require('../middleware/validation');
+const { registrationValidation, sanitizeInput } = require('../middleware/validation');
 const logger = require('../utils/logger');
 
 const router = express.Router();
 
-// Apply rate limiting and input sanitization to all registration routes
-router.use(registrationRateLimit);
+// Apply input sanitization to all registration routes
 router.use(sanitizeInput);
 
 // @route   POST /api/register

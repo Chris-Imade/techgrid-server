@@ -34,22 +34,21 @@ const contactValidation = [
 
   body('email')
     .trim()
-    .normalizeEmail()
     .notEmpty()
     .withMessage('Email is required')
-    .isEmail()
+    .isEmail({ allow_utf8_local_part: true })
     .withMessage('Please provide a valid email address')
-    .isLength({ max: 255 })
-    .withMessage('Email cannot exceed 255 characters'),
+    .isLength({ max: 320 })
+    .withMessage('Email cannot exceed 320 characters'),
 
   body('phone')
     .trim()
     .notEmpty()
     .withMessage('Phone number is required')
-    .isLength({ min: 10, max: 20 })
-    .withMessage('Phone number must be between 10 and 20 characters')
-    .matches(/^[\+]?[1-9][\d]{0,15}$/)
-    .withMessage('Please provide a valid phone number'),
+    .isLength({ min: 7, max: 25 })
+    .withMessage('Phone number must be between 7 and 25 characters')
+    .matches(/^[\+]?[\d\s\-\(\)\.]{7,25}$/)
+    .withMessage('Please provide a valid phone number (numbers, spaces, dashes, parentheses allowed)'),
 
   body('subject')
     .trim()
@@ -90,22 +89,21 @@ const registrationValidation = [
 
   body('email')
     .trim()
-    .normalizeEmail()
     .notEmpty()
     .withMessage('Email is required')
-    .isEmail()
+    .isEmail({ allow_utf8_local_part: true })
     .withMessage('Please provide a valid email address')
-    .isLength({ max: 255 })
-    .withMessage('Email cannot exceed 255 characters'),
+    .isLength({ max: 320 })
+    .withMessage('Email cannot exceed 320 characters'),
 
   body('phone')
     .trim()
     .notEmpty()
     .withMessage('Phone number is required')
-    .isLength({ min: 10, max: 20 })
-    .withMessage('Phone number must be between 10 and 20 characters')
-    .matches(/^[\+]?[1-9][\d]{0,15}$/)
-    .withMessage('Please provide a valid phone number'),
+    .isLength({ min: 7, max: 25 })
+    .withMessage('Phone number must be between 7 and 25 characters')
+    .matches(/^[\+]?[\d\s\-\(\)\.]{7,25}$/)
+    .withMessage('Please provide a valid phone number (numbers, spaces, dashes, parentheses allowed)'),
 
   body('company')
     .optional()
@@ -177,13 +175,12 @@ const registrationValidation = [
 const newsletterValidation = [
   body('email')
     .trim()
-    .normalizeEmail()
     .notEmpty()
     .withMessage('Email is required')
-    .isEmail()
+    .isEmail({ allow_utf8_local_part: true })
     .withMessage('Please provide a valid email address')
-    .isLength({ max: 255 })
-    .withMessage('Email cannot exceed 255 characters'),
+    .isLength({ max: 320 })
+    .withMessage('Email cannot exceed 320 characters'),
 
   handleValidationErrors
 ];

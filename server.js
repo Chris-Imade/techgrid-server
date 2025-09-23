@@ -14,6 +14,7 @@ require('dotenv').config();
 const contactRoutes = require('./routes/contact');
 const registrationRoutes = require('./routes/registration');
 const newsletterRoutes = require('./routes/newsletter');
+const dashboardRoutes = require('./routes/dashboard');
 
 // Import middleware
 const errorHandler = require('./middleware/errorHandler');
@@ -107,6 +108,9 @@ app.use('/api/contact', contactRoutes);
 app.use('/api/register', registrationRoutes);
 app.use('/api/newsletter', newsletterRoutes);
 
+// Dashboard routes
+app.use('/dashboard', dashboardRoutes);
+
 // Root endpoint
 app.get('/', (req, res) => {
   res.status(200).json({
@@ -118,6 +122,7 @@ app.get('/', (req, res) => {
       contact: '/api/contact',
       registration: '/api/register',
       newsletter: '/api/newsletter',
+      dashboard: '/dashboard',
       health: '/health'
     }
   });
