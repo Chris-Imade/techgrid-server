@@ -110,7 +110,7 @@ class EmailService {
         <html>
           <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
             <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-              <h2 style="color: #28a745;">Registration Confirmed!</h2>
+              <h2 style="color: #28a745;">🎫 Registration Confirmed!</h2>
               <p>Dear {{firstName}} {{lastName}},</p>
               <p>Thank you for registering for <strong>{{eventName}}</strong>!</p>
               <div style="background: #e8f5e8; padding: 20px; border-radius: 5px; margin: 20px 0;">
@@ -118,8 +118,18 @@ class EmailService {
                 <p><strong>Registration Number:</strong> {{registrationNumber}}</p>
                 <p><strong>Event:</strong> {{eventName}}</p>
                 <p><strong>Date:</strong> {{eventDate}}</p>
-                <p><strong>Location:</strong> {{eventLocation}}</p>
+                <p><strong>Location:</strong> Remote Event (Online) 🌍</p>
                 <p><strong>Experience Level:</strong> {{experience}}</p>
+              </div>
+              <div style="background: #4299e1; color: white; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 0;">
+                <h3 style="margin-bottom: 15px;">🚀 Join the Event</h3>
+                <p style="margin-bottom: 15px;">Click the button below to join the online event when it starts</p>
+                <a href="https://join.surfspotonline.com" style="display: inline-block; background: white; color: #3182ce; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: 600;">Join Meeting</a>
+              </div>
+              <div style="text-align: center; margin: 20px 0;">
+                <h3>📅 Add to Your Calendar</h3>
+                <a href="https://calendar.google.com/calendar/u/0/r/eventedit?ctz=Europe%2FLondon&recur=null&dates=20250927T130000Z%2F20250927T143000Z&text=Tech%20Grid%204.2%20The%20Rise%20of%20AI%20in%20Finance" style="display: inline-block; background: #667eea; color: white !important; padding: 10px 20px; border-radius: 8px; text-decoration: none; margin: 5px;">📅 Google Calendar</a>
+                <a href="https://calendar.yahoo.com/?v=60&VIEW=d&TITLE=Tech%20Grid%204.2%20The%20Rise%20of%20AI%20in%20Finance&ST=20250927T130000Z&DUR=0130" style="display: inline-block; background: #764ba2; color: white !important; padding: 10px 20px; border-radius: 8px; text-decoration: none; margin: 5px;">📅 Yahoo Calendar</a>
               </div>
               <p>We'll send you more details about the event as the date approaches.</p>
               <p>Best regards,<br>The Tech Grid Series Team</p>
@@ -248,16 +258,17 @@ class EmailService {
       const template = this.loadTemplate('registration_confirmation');
       const html = template({
         ...registrationData,
-        eventName: process.env.EVENT_NAME,
-        eventDate: process.env.EVENT_DATE,
-        eventLocation: process.env.EVENT_LOCATION,
+        eventName: process.env.EVENT_NAME || 'Tech Grid 4.2',
+        eventDate: process.env.EVENT_DATE || 'September 27, 2025 - 1:00 PM WAT',
+        eventLocation: 'Remote Event (Online)',
+        meetingLink: 'https://join.surfspotonline.com',
         timestamp: new Date().toLocaleString()
       });
 
       const mailOptions = {
         from: `"The Tech Grid Series" <${process.env.FROM_EMAIL}>`,
         to: registrationData.email,
-        subject: 'Registration Confirmed: The Tech Grid Series - AI in Finance',
+        subject: '🎫 Registration Confirmed: Tech Grid 4.2 - The Rise of AI in Finance (Online Event)',
         html: html
       };
 

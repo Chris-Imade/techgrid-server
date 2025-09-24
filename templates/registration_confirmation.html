@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Registration Confirmation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .email-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="10" cy="50" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="90" cy="30" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .ticket {
+            background: white;
+            margin: 0;
+            position: relative;
+        }
+        
+        .ticket-header {
+            background: #f8f9ff;
+            padding: 25px 30px;
+            border-bottom: 2px dashed #e0e6ff;
+            text-align: center;
+        }
+        
+        .ticket-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+        
+        .ticket-subtitle {
+            color: #718096;
+            font-size: 16px;
+        }
+        
+        .ticket-body {
+            padding: 30px;
+        }
+        
+        .attendee-info {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .attendee-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+        
+        .registration-number {
+            color: #718096;
+            font-size: 14px;
+            font-family: 'Courier New', monospace;
+            background: white;
+            padding: 5px 10px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+        
+        .event-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .detail-item {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .detail-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #718096;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .detail-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .location-online {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 8px;
+        }
+        
+        .meeting-section {
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .meeting-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .join-button {
+            display: inline-block;
+            background: white;
+            color: #3182ce;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .join-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        }
+        
+        .calendar-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .calendar-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+        
+        .calendar-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .calendar-button {
+            display: inline-flex;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white !important;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        .calendar-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        }
+        
+        .calendar-icon {
+            margin-right: 8px;
+            font-size: 16px;
+        }
+        
+        .qr-section {
+            text-align: center;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+        
+        .qr-title {
+            font-size: 14px;
+            color: #718096;
+            margin-bottom: 10px;
+        }
+        
+        .qr-placeholder {
+            width: 120px;
+            height: 120px;
+            background: white;
+            border: 2px dashed #cbd5e0;
+            border-radius: 8px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #a0aec0;
+            font-size: 12px;
+            text-align: center;
+        }
+        
+        .footer {
+            background: #2d3748;
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+        
+        .footer h3 {
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .footer p {
+            opacity: 0.8;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .perforated-edge {
+            position: relative;
+        }
+        
+        .perforated-edge::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -1px;
+            height: 2px;
+            background: repeating-linear-gradient(
+                to right,
+                transparent 0px,
+                transparent 8px,
+                #e0e6ff 8px,
+                #e0e6ff 16px
+            );
+        }
+        
+        @media (max-width: 600px) {
+            .event-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .calendar-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .calendar-button {
+                width: 200px;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎫 Registration Confirmed!</h1>
+            <p>Your digital ticket for Tech Grid 4.2</p>
+        </div>
+        
+        <!-- Ticket -->
+        <div class="ticket">
+            <div class="ticket-header perforated-edge">
+                <div class="ticket-title">{{eventName}}</div>
+                <div class="ticket-subtitle">The Rise of AI in Finance</div>
+            </div>
+            
+            <div class="ticket-body">
+                <!-- Attendee Information -->
+                <div class="attendee-info">
+                    <div class="attendee-name">{{firstName}} {{lastName}}</div>
+                    <div class="registration-number">Registration #{{registrationNumber}}</div>
+                </div>
+                
+                <!-- Event Details -->
+                <div class="event-details">
+                    <div class="detail-item">
+                        <div class="detail-label">📅 Date & Time</div>
+                        <div class="detail-value">{{eventDate}}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">🌍 Location</div>
+                        <div class="detail-value">
+                            Remote Event
+                            <span class="location-online">ONLINE</span>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">👤 Experience Level</div>
+                        <div class="detail-value">{{experience}}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">✉️ Contact Email</div>
+                        <div class="detail-value">{{email}}</div>
+                    </div>
+                </div>
+                
+                <!-- Meeting Access -->
+                <div class="meeting-section">
+                    <div class="meeting-title">🚀 Join the Event</div>
+                    <p style="margin-bottom: 20px; opacity: 0.9;">Click the button below to join the online event when it starts</p>
+                    <a href="https://join.surfspotonline.com" class="join-button" target="_blank">
+                        Join Meeting
+                    </a>
+                </div>
+                
+                <!-- Calendar Integration -->
+                <div class="calendar-section">
+                    <div class="calendar-title">📅 Add to Your Calendar</div>
+                    <div class="calendar-buttons">
+                        <a href="https://calendar.google.com/calendar/u/0/r/eventedit?ctz=Europe%2FLondon&recur=null&dates=20250927T130000Z%2F20250927T143000Z&details=The%20TechGrid%20is%20inviting%20you%20to%20a%20scheduled%20Zoom%20meeting.%0A%0AJoin%20Zoom%20Meeting%0Ahttps%3A%2F%2Fus06web.zoom.us%2Fw%2F88574112955%3Ftk%3DghdxvoxqjrTnJpuFA0K157rSPzu7frwE-QZ0vjivISA.DQkAAAAUn220uxYxZU9aa2dpcVRFcXRVdUlsX3dkVktnAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA%0A%0AMeeting%20ID%3A%20885%207411%202955%0AOne%20tap%20mobile%0A%2B13863475053%2C%2C88574112955%23%20US%0A%2B15074734847%2C%2C88574112955%23%20US%0A%0ADial%20by%20your%20location%0A%20%20%20%20%20%20%20%20%2B1%20386%20347%205053%20US%0A%20%20%20%20%20%20%20%20%2B1%20507%20473%204847%20US%0A%20%20%20%20%20%20%20%20%2B1%20564%20217%202000%20US%0A%20%20%20%20%20%20%20%20%2B1%20646%20558%208656%20US%20%28New%20York%29%0A%20%20%20%20%20%20%20%20%2B1%20646%20931%203860%20US%0A%20%20%20%20%20%20%20%20%2B1%20669%20444%209171%20US%0A%20%20%20%20%20%20%20%20%2B1%20669%20900%206833%20US%20%28San%20Jose%29%0A%20%20%20%20%20%20%20%20%2B1%20689%20278%201000%20US%0A%20%20%20%20%20%20%20%20%2B1%20719%20359%204580%20US%0A%20%20%20%20%20%20%20%20%2B1%20253%20205%200468%20US%0A%20%20%20%20%20%20%20%20%2B1%20253%20215%208782%20US%20%28Tacoma%29%0A%20%20%20%20%20%20%20%20%2B1%20301%20715%208592%20US%20%28Washington%20DC%29%0A%20%20%20%20%20%20%20%20%2B1%20305%20224%201968%20US%0A%20%20%20%20%20%20%20%20%2B1%20309%20205%203325%20US%0A%20%20%20%20%20%20%20%20%2B1%20312%20626%206799%20US%20%28Chicago%29%0A%20%20%20%20%20%20%20%20%2B1%20346%20248%207799%20US%20%28Houston%29%0A%20%20%20%20%20%20%20%20%2B1%20360%20209%205623%20US%0AMeeting%20ID%3A%20885%207411%202955%0AFind%20your%20local%20number%3A%20https%3A%2F%2Fus06web.zoom.us%2Fu%2FkesPlzFUyU%0A%0A&location=https%3A%2F%2Fus06web.zoom.us%2Fw%2F88574112955%3Ftk%3DghdxvoxqjrTnJpuFA0K157rSPzu7frwE-QZ0vjivISA.DQkAAAAUn220uxYxZU9aa2dpcVRFcXRVdUlsX3dkVktnAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&text=Tech%20Grid%204.2%20The%20Rise%20of%20AI%20in%20Finance&_x_zm_rtaid=W85FRliaSQmsdpWnHX5qbw.1758655134570.2d3b4354ac2c0425a07310d9680ff6cf&_x_zm_rhtaid=52" 
+                           class="calendar-button" target="_blank">
+                            <span class="calendar-icon">📅</span>
+                            Add to Google Calendar
+                        </a>
+                        <a href="https://calendar.yahoo.com/?v=60&VIEW=d&TITLE=Tech%20Grid%204.2%20The%20Rise%20of%20AI%20in%20Finance&in_loc=https%3A%2F%2Fus06web.zoom.us%2Fw%2F88574112955%3Ftk%3DghdxvoxqjrTnJpuFA0K157rSPzu7frwE-QZ0vjivISA.DQkAAAAUn220uxYxZU9aa2dpcVRFcXRVdUlsX3dkVktnAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&URL=https%3A%2F%2Fus06web.zoom.us%2Fw%2F88574112955%3Ftk%3DghdxvoxqjrTnJpuFA0K157rSPzu7frwE-QZ0vjivISA.DQkAAAAUn220uxYxZU9aa2dpcVRFcXRVdUlsX3dkVktnAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&ST=20250927T130000Z&DUR=0130&DESC=The%20TechGrid%20is%20inviting%20you%20to%20a%20scheduled%20Zoom%20meeting.%0D%0A%0D%0AJoin%20Zoom%20Meeting%0D%0Ahttps%3A%2F%2Fus06web.zoom.us%2Fw%2F88574112955%3Ftk%3DghdxvoxqjrTnJpuFA0K157rSPzu7frwE-QZ0vjivISA.DQkAAAAUn220uxYxZU9aa2dpcVRFcXRVdUlsX3dkVktnAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA%0D%0A%0D%0AMeeting%20ID%3A%20885%207411%202955%0D%0AOne%20tap%20mobile%0D%0A%2B13863475053%2C%2C88574112955%23%20US%0D%0A%2B15074734847%2C%2C88574112955%23%20US%0D%0A%0D%0ADial%20by%20your%20location%0D%0A%20%20%20%20%20%20%20%20%2B1%20386%20347%205053%20US%0D%0A%20%20%20%20%20%20%20%20%2B1%20507%20473%204847%20US%0D%0A%20%20%20%20%20%20%20%20%2B1%20564%20217%202000%20US%0D%0A%20%20%20%20%20%20%20%20%2B1%20646%20558%208656%20US%20%28New%20York%29%0D%0A%20%20%20%20%20%20%20%20%2B1%20646%20931%203860%20US%0D%0A%20%20%20%20%20%20%20%20%2B1%20669%20444%209171%20US%0D%0A%20%20%20%20%20%20%20%20%2B1%20669%20900%206833%20US%20%28San%20Jose%29%0D%0A%20%20%20%20%20%20%20%20%2B1%20689%20278%201000%20US%0D%0A%20%20%20%20%20%20%20%20%2B1%20719%20359%204580%20US%0D%0A%20%20%20%20%20%20%20%20%2B1%20253%20205%200468%20US%0D%0A%20%20%20%20%20%20%20%20%2B1%20253%20215%208782%20US%20%28Tacoma%29%0D%0A%20%20%20%20%20%20%20%20%2B1%20301%20715%208592%20US%20%28Washington%20DC%29%0D%0A%20%20%20%20%20%20%20%20%2B1%20305%20224%201968%20US%0D%0A%20%20%20%20%20%20%20%20%2B1%20309%20205%203325%20US%0D%0A%20%20%20%20%20%20%20%20%2B1%20312%20626%206799%20US%20%28Chicago%29%0D%0A%20%20%20%20%20%20%20%20%2B1%20346%20248%207799%20US%20%28Houston%29%0D%0A%20%20%20%20%20%20%20%20%2B1%20360%20209%205623%20US%0D%0AMeeting%20ID%3A%20885%207411%202955%0D%0AFind%20your%20local%20number%3A%20https%3A%2F%2Fus06web.zoom.us%2Fu%2FkesPlzFUyU%0D%0A%0D%0A&_x_zm_rtaid=W85FRliaSQmsdpWnHX5qbw.1758655134570.2d3b4354ac2c0425a07310d9680ff6cf&_x_zm_rhtaid=52" 
+                           class="calendar-button" target="_blank">
+                            <span class="calendar-icon">📅</span>
+                            Add to Yahoo Calendar
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Important Notes -->
+                <div style="background: #fff5f5; border: 1px solid #fed7d7; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                    <h4 style="color: #c53030; margin-bottom: 10px;">📋 Important Notes:</h4>
+                    <ul style="color: #742a2a; padding-left: 20px;">
+                        <li>Please join the meeting 5-10 minutes before the start time</li>
+                        <li>Ensure you have a stable internet connection</li>
+                        <li>We recommend using headphones for better audio quality</li>
+                        <li>The meeting link will be active 15 minutes before the event</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <h3>The Tech Grid Series</h3>
+            <p>Thank you for registering! We're excited to have you join us for this innovative discussion on AI in Finance. If you have any questions, please don't hesitate to contact our support team.</p>
+            <p style="margin-top: 15px; font-size: 12px; opacity: 0.7;">
+                This is an automated confirmation email. Please save this ticket for your records.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
