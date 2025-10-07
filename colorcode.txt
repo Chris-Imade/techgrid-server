@@ -1,0 +1,4 @@
+#2b3eb3 - main blue
+#063306 - main green
+#13cb13 - light green
+#010b01 - dark green

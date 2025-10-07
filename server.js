@@ -8,6 +8,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss');
 const hpp = require('hpp');
 const morgan = require('morgan');
+const path = require('path');
 require('dotenv').config();
 
 // Import routes
@@ -30,9 +31,12 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
+      scriptSrcAttr: ["'unsafe-inline'"],
       imgSrc: ["'self'", "data:", "https:"],
+      fontSrc: ["'self'", "https://cdn.jsdelivr.net"],
+      connectSrc: ["'self'"],
     },
   },
 }));
@@ -110,6 +114,9 @@ app.use('/api/newsletter', newsletterRoutes);
 
 // Dashboard routes
 app.use('/dashboard', dashboardRoutes);
+
+// Serve static assets (logos, images)
+app.use('/assets', express.static(path.join(__dirname, 'public/assets')));
 
 // Root endpoint
 app.get('/', (req, res) => {

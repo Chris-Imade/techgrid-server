@@ -21,7 +21,7 @@ body {
 /* Sidebar */
 .sidebar {
     width: 280px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2b3eb3 0%, #063306 100%);
     color: white;
     position: fixed;
     height: 100vh;
@@ -38,6 +38,13 @@ body {
 .sidebar-header h2 {
     font-size: 1.4rem;
     font-weight: 600;
+}
+
+.sidebar-header .logo-img {
+    height: 40px;
+    width: auto;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 .sidebar-header i {
@@ -68,12 +75,12 @@ body {
 
 .menu-item:hover {
     background: rgba(255,255,255,0.1);
-    border-left-color: #ffd700;
+    border-left-color: #13cb13;
 }
 
 .menu-item.active {
     background: rgba(255,255,255,0.15);
-    border-left-color: #ffd700;
+    border-left-color: #13cb13;
     font-weight: 600;
 }
 
@@ -81,17 +88,7 @@ body {
     margin-right: 0.75rem;
     width: 20px;
     text-align: center;
-}
-
-.menu-item .count {
-    background: #ffd700;
-    color: #333;
-    padding: 0.2rem 0.5rem;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    min-width: 20px;
-    text-align: center;
+    font-size: 1.1rem;
 }
 
 /* Main Content */
@@ -425,12 +422,12 @@ body {
 }
 
 .btn-primary {
-    background: #007bff;
+    background: #2b3eb3;
     color: white;
 }
 
 .btn-primary:hover {
-    background: #0056b3;
+    background: #1e2d80;
 }
 
 .btn-secondary {
@@ -443,12 +440,12 @@ body {
 }
 
 .btn-success {
-    background: #28a745;
+    background: #13cb13;
     color: white;
 }
 
 .btn-success:hover {
-    background: #1e7e34;
+    background: #0fa50f;
 }
 
 .btn-warning {
@@ -494,9 +491,9 @@ body {
 }
 
 .pagination button:hover:not(:disabled) {
-    background: #007bff;
+    background: #2b3eb3;
     color: white;
-    border-color: #007bff;
+    border-color: #2b3eb3;
 }
 
 .pagination button:disabled {
@@ -505,9 +502,9 @@ body {
 }
 
 .pagination button.active {
-    background: #007bff;
+    background: #2b3eb3;
     color: white;
-    border-color: #007bff;
+    border-color: #2b3eb3;
 }
 
 .pagination-info {
@@ -544,7 +541,7 @@ body {
 
 .loading-spinner i {
     font-size: 2rem;
-    color: #007bff;
+    color: #2b3eb3;
     margin-bottom: 1rem;
 }
 
@@ -553,32 +550,63 @@ body {
     margin: 0;
 }
 
-/* Modal */
+/* Modals - Z-Index Hierarchy:
+ * 1000: Base modals (edit, bulk email, etc.)
+ * 1050: Progress modals
+ * 1100: Confirmation modals (highest priority)
+ * 9999: Loading overlay & toast notifications
+ */
 .modal {
+    display: none;
     position: fixed;
-    top: 0;
+    z-index: 1000;
     left: 0;
+    top: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.5);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 10000;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(5px);
+}
+
+/* Higher z-index for confirmation modal to appear above other modals */
+#confirm-modal {
+    z-index: 1100;
+    background: rgba(0,0,0,0.8); /* Slightly more opaque background */
+}
+
+#confirm-modal .modal-content {
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4); /* Enhanced shadow for prominence */
+    border: 2px solid rgba(43, 62, 179, 0.2); /* Subtle border with brand color */
+}
+
+/* Higher z-index for progress modal to appear above bulk email modal */
+#bulk-email-progress-modal {
+    z-index: 1050;
 }
 
 .modal.show {
     display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .modal-content {
     background: white;
     border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     max-width: 600px;
     width: 90%;
-    max-height: 80vh;
+    max-height: 90vh;
     overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    animation: modalSlideIn 0.3s ease;
+}
+
+.modal-content.modal-large {
+    max-width: 900px;
+    width: 95%;
+    max-height: 95vh;
 }
 
 .modal-content.small {
@@ -655,8 +683,8 @@ body {
 .form-group textarea:focus,
 .form-group select:focus {
     outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+    border-color: #2b3eb3;
+    box-shadow: 0 0 0 2px rgba(43,62,179,0.25);
 }
 
 .form-group textarea {
@@ -846,5 +874,595 @@ body {
     .btn-sm {
         padding: 0.5rem;
         font-size: 0.7rem;
+    }
+}
+
+/* Contact Detail View */
+.contact-detail-container {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+    margin-bottom: 1.5rem;
+}
+
+.contact-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid #e9ecef;
+    margin-bottom: 1.5rem;
+}
+
+.contact-detail-header h2 {
+    color: #2c3e50;
+    margin: 0;
+}
+
+.contact-detail-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.info-item {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #2b3eb3;
+}
+
+.info-item label {
+    display: block;
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.info-item .info-value {
+    color: #2c3e50;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.contact-message-box {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid #13cb13;
+}
+
+.contact-message-box h3 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.contact-message-box p {
+    color: #495057;
+    line-height: 1.8;
+    white-space: pre-wrap;
+}
+
+/* Reply Modal */
+.reply-modal-content {
+    max-width: 800px;
+}
+
+.reply-header {
+    background: #f8f9fa;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.reply-header strong {
+    color: #2c3e50;
+}
+
+.reply-header .reply-to {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.email-editor {
+    min-height: 300px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 1rem;
+    font-family: inherit;
+    line-height: 1.6;
+}
+
+.email-editor:focus {
+    outline: none;
+    border-color: #2b3eb3;
+    box-shadow: 0 0 0 2px rgba(43,62,179,0.25);
+}
+
+.editor-toolbar {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-bottom: none;
+    border-radius: 6px 6px 0 0;
+}
+
+.editor-toolbar button {
+    padding: 0.5rem;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.editor-toolbar button:hover {
+    background: #e9ecef;
+}
+
+/* Action Button Groups */
+.action-button-group {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.btn-info {
+    background: #17a2b8;
+    color: white;
+}
+
+.btn-info:hover {
+    background: #138496;
+}
+
+/* Registration Quick Actions */
+.quick-action-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #e8f5e8;
+    border-radius: 8px;
+    color: #063306;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-top: 0.5rem;
+}
+
+.quick-action-badge i {
+    color: #13cb13;
+}
+
+/* Bulk Email Modal Styles */
+.toolbar-divider {
+    width: 1px;
+    background: #ddd;
+    margin: 0 0.25rem;
+}
+
+.email-editor[contenteditable="true"]:empty:before {
+    content: attr(placeholder);
+    color: #adb5bd;
+    pointer-events: none;
+}
+
+.progress {
+    height: 25px;
+    background: #e9ecef;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, #2b3eb3, #13cb13);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.progress-info {
+    font-size: 0.9rem;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+}
+
+#attachment-list .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    margin: 0.25rem;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+}
+
+#attachment-list .badge button {
+    border: none;
+    background: transparent;
+    color: #dc3545;
+    cursor: pointer;
+}
+
+/* Form Controls Bootstrap Integration */
+.form-label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #2b3eb3;
+    box-shadow: 0 0 0 2px rgba(43,62,179,0.25);
+}
+
+/* Action Buttons Fix */
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-sm {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+}
+
+/* Progress Success/Failure States */
+.progress-bar.bg-success {
+    background: linear-gradient(90deg, #063306, #13cb13) !important;
+}
+
+.progress-bar.bg-danger {
+    background: linear-gradient(90deg, #dc3545, #ff6b6b) !important;
+}
+
+.progress-bar.bg-warning {
+    background: linear-gradient(90deg, #ffc107, #ffdb4d) !important;
+}
+
+/* Failed Recipients List */
+#failed-recipients-list {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 1rem;
+}
+
+#failed-recipients-list li {
+    padding: 0.5rem;
+    background: white;
+    border-radius: 4px;
+    margin-bottom: 0.25rem;
+    font-size: 0.9rem;
+}
+
+/* Toast Notifications */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    max-width: 400px;
+    width: 100%;
+}
+
+.toast {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    margin-bottom: 12px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transform: translateX(100%);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-left: 4px solid;
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+}
+
+.toast.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.toast.success {
+    border-left-color: #13cb13;
+    background: linear-gradient(135deg, rgba(19, 203, 19, 0.05) 0%, rgba(6, 51, 6, 0.02) 100%);
+}
+
+.toast.error {
+    border-left-color: #dc3545;
+    background: linear-gradient(135deg, rgba(220, 53, 69, 0.05) 0%, rgba(220, 53, 69, 0.02) 100%);
+}
+
+.toast.warning {
+    border-left-color: #ffc107;
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.05) 0%, rgba(255, 193, 7, 0.02) 100%);
+}
+
+.toast.info {
+    border-left-color: #2b3eb3;
+    background: linear-gradient(135deg, rgba(43, 62, 179, 0.05) 0%, rgba(43, 62, 179, 0.02) 100%);
+}
+
+.toast-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.toast.success .toast-icon {
+    color: #13cb13;
+}
+
+.toast.error .toast-icon {
+    color: #dc3545;
+}
+
+.toast.warning .toast-icon {
+    color: #ffc107;
+}
+
+.toast.info .toast-icon {
+    color: #2b3eb3;
+}
+
+.toast-content {
+    flex: 1;
+}
+
+.toast-title {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 2px;
+    color: #1a1a1a;
+}
+
+.toast-message {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.4;
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #999;
+    cursor: pointer;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.toast-close:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: #666;
+}
+
+.toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #2b3eb3, #13cb13);
+    border-radius: 0 0 12px 12px;
+    transition: width linear;
+}
+
+.toast.success .toast-progress {
+    background: linear-gradient(90deg, #13cb13, #063306);
+}
+
+.toast.error .toast-progress {
+    background: linear-gradient(90deg, #dc3545, #c82333);
+}
+
+.toast.warning .toast-progress {
+    background: linear-gradient(90deg, #ffc107, #e0a800);
+}
+
+/* Modal animations */
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Toast animations */
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* Rich Text Editor Styles */
+.editor-toolbar {
+    display: flex;
+    gap: 4px;
+    padding: 8px;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px 8px 0 0;
+    border-bottom: none;
+}
+
+.editor-toolbar button {
+    padding: 6px 8px;
+    border: 1px solid #dee2e6;
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+}
+
+.editor-toolbar button:hover {
+    background: #e9ecef;
+    border-color: #adb5bd;
+}
+
+.editor-toolbar button:active,
+.editor-toolbar button.active {
+    background: #2b3eb3;
+    color: white;
+    border-color: #2b3eb3;
+}
+
+.toolbar-divider {
+    width: 1px;
+    height: 24px;
+    background: #dee2e6;
+    margin: 4px 4px;
+    align-self: center;
+}
+
+.email-editor {
+    min-height: 150px;
+    padding: 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 0 0 8px 8px;
+    background: white;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+    outline: none;
+    resize: vertical;
+}
+
+.email-editor:focus {
+    border-color: #2b3eb3;
+    box-shadow: 0 0 0 2px rgba(43, 62, 179, 0.1);
+}
+
+.email-editor[contenteditable="true"]:empty:before {
+    content: attr(placeholder);
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* Bulk email editor specific styles */
+#bulk-email-editor {
+    min-height: 200px;
+}
+
+/* Bulk Email Progress Modal Styles */
+#bulk-email-progress-modal .modal-content {
+    max-width: 500px;
+}
+
+#bulk-email-progress-modal .progress {
+    border-radius: 10px;
+    background-color: #e9ecef;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+}
+
+#bulk-email-progress-modal .progress-bar {
+    background: linear-gradient(90deg, #2b3eb3, #13cb13);
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+#bulk-email-progress-modal .progress-bar.bg-success {
+    background: linear-gradient(90deg, #13cb13, #063306) !important;
+}
+
+#bulk-email-progress-modal .progress-bar.bg-danger {
+    background: linear-gradient(90deg, #dc3545, #c82333) !important;
+}
+
+#bulk-progress-text {
+    font-size: 14px;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+#bulk-progress-icon {
+    font-size: 1.2rem;
+    margin-right: 8px;
+}
+
+/* Mobile responsiveness for toasts */
+@media (max-width: 768px) {
+    .toast-container {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+    
+    .toast {
+        margin-bottom: 8px;
+        padding: 12px 16px;
+    }
+    
+    .toast-title {
+        font-size: 13px;
+    }
+    
+    .toast-message {
+        font-size: 12px;
+    }
+    
+    .editor-toolbar {
+        flex-wrap: wrap;
+        gap: 2px;
+        padding: 6px;
+    }
+    
+    .editor-toolbar button {
+        min-width: 28px;
+        height: 28px;
+        padding: 4px 6px;
     }
 }

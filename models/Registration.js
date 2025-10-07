@@ -122,6 +122,10 @@ const registrationSchema = new mongoose.Schema({
       type: String,
       enum: ['registered', 'confirmed', 'cancelled', 'attended'],
       default: 'registered'
+    },
+    inNewsletter: {
+      type: Boolean,
+      default: false
     }
   },
   confirmationEmailSent: {

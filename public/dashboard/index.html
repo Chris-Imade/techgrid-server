@@ -4,55 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tech Grid Series - Admin Dashboard</title>
-    <link rel="stylesheet" href="/dashboard/static/style.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/dashboard/style.css">
 </head>
 <body>
     <div class="dashboard-container">
         <!-- Sidebar -->
         <nav class="sidebar">
             <div class="sidebar-header">
-                <h2><i class="fas fa-chart-line"></i> TechGrid Dashboard</h2>
+                <h2><img src="/assets/logo-white.png" alt="TechGrid" class="logo-img"></h2>
             </div>
-            <ul class="sidebar-menu">
+            <ul class="sidebar-menu list-unstyled">
                 <li class="menu-item active" data-section="overview">
                     <div class="menu-item-content">
-                        <i class="fas fa-tachometer-alt"></i> Overview
+                        <i class="bi bi-speedometer2"></i> Overview
                     </div>
                 </li>
                 <li class="menu-item" data-section="contacts">
                     <div class="menu-item-content">
-                        <i class="fas fa-envelope"></i> Contacts
+                        <i class="bi bi-envelope"></i> Contacts
+                        <span class="badge" id="contacts-count">0</span>
                     </div>
-                    <span class="count" id="contacts-count">0</span>
                 </li>
                 <li class="menu-item" data-section="registrations">
                     <div class="menu-item-content">
-                        <i class="fas fa-users"></i> Registrations
+                        <i class="bi bi-people"></i> Registrations
+                        <span class="badge" id="registrations-count">0</span>
                     </div>
-                    <span class="count" id="registrations-count">0</span>
                 </li>
                 <li class="menu-item" data-section="newsletter">
                     <div class="menu-item-content">
-                        <i class="fas fa-newspaper"></i> Newsletter
+                        <i class="bi bi-newspaper"></i> Newsletter
+                        <span class="badge" id="newsletter-count">0</span>
                     </div>
-                    <span class="count" id="newsletter-count">0</span>
                 </li>
             </ul>
         </nav>
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Header -->
-            <header class="content-header">
-                <h1 id="page-title">Dashboard Overview</h1>
-                <div class="header-actions">
-                    <button class="btn btn-primary" onclick="refreshData()">
-                        <i class="fas fa-sync-alt"></i> Refresh
-                    </button>
-                    <span class="last-updated">Last updated: <span id="last-updated-time">--</span></span>
-                </div>
-            </header>
+            <!-- Header removed per user request -->
 
             <!-- Overview Section -->
             <section id="overview-section" class="content-section active">
@@ -115,7 +109,10 @@
                 </div>
 
                 <div class="recent-activity">
-                    <h2>Recent Activity</h2>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2>Recent Activity</h2>
+                        <small class="text-muted">Last updated: <span id="last-updated-time">--</span></small>
+                    </div>
                     <div class="activity-grid">
                         <div class="activity-card">
                             <h3>Recent Contacts</h3>
@@ -135,42 +132,52 @@
 
             <!-- Contacts Section -->
             <section id="contacts-section" class="content-section">
-                <div class="section-header">
-                    <h2>Contact Form Submissions</h2>
-                    <div class="section-actions">
-                        <button class="btn btn-success" onclick="addNewRecord('contacts')">
-                            <i class="fas fa-plus"></i> Add New Contact
-                        </button>
-                        <div class="search-box">
-                            <input type="text" id="contacts-search" placeholder="Search contacts...">
-                            <i class="fas fa-search"></i>
+                <div id="contacts-list-view">
+                    <div class="section-header">
+                        <h2>Contact Form Submissions</h2>
+                        <div class="section-actions">
+                            <button class="btn btn-success" onclick="addNewRecord('contacts')">
+                                <i class="fas fa-plus"></i> Add New Contact
+                            </button>
+                            <div class="search-box">
+                                <input type="text" id="contacts-search" placeholder="Search contacts...">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <select id="contacts-status-filter">
+                                <option value="">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="processed">Processed</option>
+                                <option value="responded">Responded</option>
+                            </select>
                         </div>
-                        <select id="contacts-status-filter">
-                            <option value="">All Status</option>
-                            <option value="pending">Pending</option>
-                            <option value="processed">Processed</option>
-                            <option value="responded">Responded</option>
-                        </select>
                     </div>
+                    <div class="table-container">
+                        <table id="contacts-table" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Subject</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="contacts-tbody">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination" id="contacts-pagination"></div>
                 </div>
-                <div class="table-container">
-                    <table id="contacts-table" class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Phone</th>
-                                <th>Subject</th>
-                                <th>Status</th>
-                                <th>Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="contacts-tbody">
-                        </tbody>
-                    </table>
+
+                <!-- Contact Detail View -->
+                <div id="contacts-detail-view" style="display: none;">
+                    <button class="btn btn-secondary" onclick="backToContactsList()">
+                        <i class="fas fa-arrow-left"></i> Back to Contacts
+                    </button>
+                    <div id="contact-detail-content"></div>
                 </div>
-                <div class="pagination" id="contacts-pagination"></div>
             </section>
 
             <!-- Registrations Section -->
@@ -227,12 +234,15 @@
                 <div class="section-header">
                     <h2>Newsletter Subscriptions</h2>
                     <div class="section-actions">
+                        <button class="btn btn-primary" onclick="openBulkEmailModal()">
+                            <i class="bi bi-send-fill"></i> Send Bulk Email
+                        </button>
                         <button class="btn btn-success" onclick="addNewRecord('newsletter')">
-                            <i class="fas fa-plus"></i> Add New Subscriber
+                            <i class="bi bi-plus-circle"></i> Add Subscriber
                         </button>
                         <div class="search-box">
                             <input type="text" id="newsletter-search" placeholder="Search subscribers...">
-                            <i class="fas fa-search"></i>
+                            <i class="bi bi-search"></i>
                         </div>
                         <select id="newsletter-status-filter">
                             <option value="">All Status</option>
@@ -275,6 +285,9 @@
         </div>
     </div>
 
+    <!-- Toast Notifications Container -->
+    <div id="toast-container" class="toast-container"></div>
+
     <!-- Modal for editing records -->
     <div id="edit-modal" class="modal">
         <div class="modal-content">
@@ -309,6 +322,245 @@
         </div>
     </div>
 
-    <script src="/dashboard/static/script.js"></script>
+    <!-- Reply Email Modal -->
+    <div id="reply-modal" class="modal">
+        <div class="modal-content reply-modal-content">
+            <div class="modal-header">
+                <h3>Reply to Contact</h3>
+                <button class="modal-close" onclick="closeReplyModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="reply-header">
+                    <div><strong>To:</strong> <span id="reply-to-email"></span></div>
+                    <div class="reply-to"><strong>Re:</strong> <span id="reply-subject"></span></div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Your Reply</label>
+                    <div class="editor-toolbar">
+                        <button type="button" onclick="formatText('bold')" title="Bold"><i class="fas fa-bold"></i></button>
+                        <button type="button" onclick="formatText('italic')" title="Italic"><i class="fas fa-italic"></i></button>
+                        <button type="button" onclick="formatText('underline')" title="Underline"><i class="fas fa-underline"></i></button>
+                        <button type="button" onclick="formatText('insertUnorderedList')" title="Bullet List"><i class="fas fa-list-ul"></i></button>
+                        <button type="button" onclick="formatText('insertOrderedList')" title="Numbered List"><i class="fas fa-list-ol"></i></button>
+                    </div>
+                    <div id="email-editor" class="email-editor" contenteditable="true" placeholder="Type your reply here..."></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeReplyModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="sendReply()">
+                    <i class="fas fa-paper-plane"></i> Send Reply
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Email Modal -->
+    <div id="bulk-email-modal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3><i class="bi bi-send-fill"></i> Send Bulk Email to Newsletter Subscribers</h3>
+                <button class="modal-close" onclick="closeBulkEmailModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Subscriber Count -->
+                <div class="alert alert-info mb-3">
+                    <i class="bi bi-people-fill"></i>
+                    <strong id="bulk-email-count">0</strong> active subscribers will receive this email
+                </div>
+
+                <!-- Template Selection -->
+                <div class="mb-3">
+                    <label class="form-label"><i class="bi bi-file-text"></i> Use Previous Template (Optional)</label>
+                    <select class="form-control" id="bulk-template-select" onchange="loadEmailTemplate()">
+                        <option value="">-- Start Fresh --</option>
+                    </select>
+                </div>
+
+                <!-- Email Subject -->
+                <div class="mb-3">
+                    <label class="form-label">Subject *</label>
+                    <input type="text" class="form-control" id="bulk-email-subject" placeholder="Enter email subject" required>
+                </div>
+
+                <!-- Rich Text Editor Toolbar -->
+                <div class="mb-3">
+                    <label class="form-label">Message *</label>
+                    <div class="editor-toolbar mb-2">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="formatBulkText('bold')" title="Bold">
+                            <i class="bi bi-type-bold"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="formatBulkText('italic')" title="Italic">
+                            <i class="bi bi-type-italic"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="formatBulkText('underline')" title="Underline">
+                            <i class="bi bi-type-underline"></i>
+                        </button>
+                        <span class="toolbar-divider"></span>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="formatBulkText('insertUnorderedList')" title="Bullet List">
+                            <i class="bi bi-list-ul"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="formatBulkText('insertOrderedList')" title="Numbered List">
+                            <i class="bi bi-list-ol"></i>
+                        </button>
+                        <span class="toolbar-divider"></span>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="formatBulkText('justifyLeft')" title="Align Left">
+                            <i class="bi bi-text-left"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="formatBulkText('justifyCenter')" title="Align Center">
+                            <i class="bi bi-text-center"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="formatBulkText('justifyRight')" title="Align Right">
+                            <i class="bi bi-text-right"></i>
+                        </button>
+                        <span class="toolbar-divider"></span>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="formatBulkText('createLink')" title="Insert Link">
+                            <i class="bi bi-link-45deg"></i>
+                        </button>
+                    </div>
+                    <div id="bulk-email-editor" class="email-editor" contenteditable="true" placeholder="Compose your message..."></div>
+                </div>
+
+                <!-- Attachments -->
+                <div class="mb-3">
+                    <label class="form-label"><i class="bi bi-paperclip"></i> Attachments (Optional)</label>
+                    <input type="file" class="form-control" id="bulk-email-attachments" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif">
+                    <small class="text-muted">Max 5 files, 10MB each</small>
+                    <div id="attachment-list" class="mt-2"></div>
+                </div>
+
+                <!-- Progress Bar (Hidden initially) -->
+                <div id="bulk-email-progress" class="mt-3" style="display: none;">
+                    <h6>Sending Progress</h6>
+                    <div class="progress mb-2">
+                        <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" 
+                             role="progressbar" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-info">
+                        <span id="progress-sent">0</span> / <span id="progress-total">0</span> sent
+                        <span class="text-danger ms-3" id="progress-failed-container" style="display: none;">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <span id="progress-failed">0</span> failed
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Failed Recipients (shown after sending if any failures) -->
+                <div id="failed-recipients" class="mt-3" style="display: none;">
+                    <div class="alert alert-warning">
+                        <h6><i class="bi bi-exclamation-triangle"></i> Failed to send to some recipients:</h6>
+                        <ul id="failed-recipients-list" class="mb-2"></ul>
+                        <button class="btn btn-sm btn-warning" onclick="retryFailedSends()">
+                            <i class="bi bi-arrow-clockwise"></i> Retry Failed Sends
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="saveBulkEmailDraft()">
+                    <i class="bi bi-save"></i> Save as Draft
+                </button>
+                <button class="btn btn-secondary" onclick="closeBulkEmailModal()">Cancel</button>
+                <button class="btn btn-primary" id="send-bulk-email-btn" onclick="sendBulkEmail()">
+                    <i class="bi bi-send-fill"></i> Send to All Subscribers
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Email Progress Modal -->
+    <div id="bulk-email-progress-modal" class="modal">
+        <div class="modal-content small">
+            <div class="modal-header">
+                <h3><i id="bulk-progress-icon" class="bi bi-send-fill text-primary"></i> Sending Bulk Email</h3>
+            </div>
+            <div class="modal-body text-center">
+                <div class="mb-3">
+                    <div class="progress" style="height: 20px;">
+                        <div id="bulk-progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" 
+                             role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                        </div>
+                    </div>
+                </div>
+                <p id="bulk-progress-text" class="mb-0">Preparing to send emails...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Debug logging for buttons
+        console.log('🔧 Dashboard HTML loaded, setting up button handlers...');
+        
+        // Global button handlers with logging
+        function editRecord(section, id) {
+            console.log('🔘 editRecord clicked:', section, id);
+            if (window.dashboard) {
+                console.log('✅ Dashboard found, calling editRecord');
+                window.dashboard.editRecord(section, id);
+            } else {
+                console.error('❌ Dashboard not initialized yet');
+            }
+        }
+        
+        function deleteRecord(section, id, name) {
+            console.log('🔘 deleteRecord clicked:', section, id, name);
+            if (window.dashboard) {
+                console.log('✅ Dashboard found, calling deleteRecord');
+                window.dashboard.deleteRecord(section, id, name);
+            } else {
+                console.error('❌ Dashboard not initialized yet');
+            }
+        }
+        
+        function updateStatus(section, id) {
+            console.log('🔘 updateStatus clicked:', section, id);
+            if (window.dashboard) {
+                console.log('✅ Dashboard found, calling updateStatus');
+                window.dashboard.updateStatus(section, id);
+            } else {
+                console.error('❌ Dashboard not initialized yet');
+            }
+        }
+        
+        function viewContactDetail(contactId) {
+            console.log('🔘 viewContactDetail clicked:', contactId);
+            if (window.dashboard) {
+                console.log('✅ Dashboard found, calling viewContactDetail');
+                window.dashboard.viewContactDetail(contactId);
+            } else {
+                console.error('❌ Dashboard not initialized yet');
+            }
+        }
+        
+        // addToNewsletter function is defined globally in script.js
+        
+        // Bulk email modal function moved to script.js
+        
+        function unsubscribeNewsletter(subscriptionId, email) {
+            console.log('🔘 unsubscribeNewsletter clicked:', subscriptionId, email);
+            if (window.unsubscribeNewsletter) {
+                console.log('✅ Function found, calling unsubscribeNewsletter');
+                window.unsubscribeNewsletter(subscriptionId, email);
+            } else {
+                console.error('❌ unsubscribeNewsletter function not found');
+            }
+        }
+        
+        function resubscribeNewsletter(subscriptionId, email) {
+            console.log('🔘 resubscribeNewsletter clicked:', subscriptionId, email);
+            if (window.resubscribeNewsletter) {
+                console.log('✅ Function found, calling resubscribeNewsletter');
+                window.resubscribeNewsletter(subscriptionId, email);
+            } else {
+                console.error('❌ resubscribeNewsletter function not found');
+            }
+        }
+        
+        console.log('🔧 Button handlers set up complete');
+    </script>
+    <script src="/dashboard/script.js"></script>
 </body>
 </html>
