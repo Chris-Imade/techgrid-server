@@ -1053,7 +1053,8 @@ router.post('/api/newsletter/bulk-email', async (req, res) => {
     let failed = 0;
     
     // Process emails in smaller batches to avoid SMTP timeouts
-    const BATCH_SIZE = subscribers.length <= 10 ? 2 : 3;
+    // Use single email processing in production for maximum reliability
+    const BATCH_SIZE = process.env.NODE_ENV === 'production' ? 1 : (subscribers.length <= 10 ? 2 : 3);
     const batches = [];
     
     for (let i = 0; i < subscribers.length; i += BATCH_SIZE) {
@@ -1063,35 +1064,48 @@ router.post('/api/newsletter/bulk-email', async (req, res) => {
     // Process each batch concurrently
     for (const batch of batches) {
       const emailPromises = batch.map(async (subscriber) => {
-        try {
-          const mailOptions = {
-            from: `"The Tech Grid Series" <${process.env.FROM_EMAIL}>`,
-            to: subscriber.email,
-            subject: subject,
-            html: `
-              <html>
-                <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto;">
-                  <div style="background: linear-gradient(135deg, #2b3eb3 0%, #063306 100%); padding: 20px; text-align: center;">
-                    <h1 style="color: white; margin: 0;">The Tech Grid Series</h1>
-                  </div>
-                  <div style="padding: 30px; background: #f8f9fa;">
-                    ${body}
-                  </div>
-                  <div style="padding: 20px; text-align: center; background: #e9ecef; font-size: 0.9rem; color: #6c757d;">
-                    <p>You're receiving this because you subscribed to The Tech Grid Series newsletter.</p>
-                    <p><a href="https://techgrid-server-9zjv.onrender.com/unsubscribe?email=${subscriber.email}" style="color: #2b3eb3;">Unsubscribe</a></p>
-                  </div>
-                </body>
-              </html>
-            `
-          };
-          
-          await emailService.transporter.sendMail(mailOptions);
-          return { success: true, email: subscriber.email };
-        } catch (error) {
-          logger.error(`Failed to send to ${subscriber.email}:`, error);
-          return { success: false, email: subscriber.email, error: error.message };
+        // Retry logic for individual emails
+        const maxRetries = 3;
+        let lastError;
+        
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+          try {
+            const mailOptions = {
+              from: `"The Tech Grid Series" <${process.env.FROM_EMAIL}>`,
+              to: subscriber.email,
+              subject: subject,
+              html: `
+                <html>
+                  <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto;">
+                    <div style="background: linear-gradient(135deg, #2b3eb3 0%, #063306 100%); padding: 20px; text-align: center;">
+                      <h1 style="color: white; margin: 0;">The Tech Grid Series</h1>
+                    </div>
+                    <div style="padding: 30px; background: #f8f9fa;">
+                      ${body}
+                    </div>
+                    <div style="padding: 20px; text-align: center; background: #e9ecef; font-size: 0.9rem; color: #6c757d;">
+                      <p>You're receiving this because you subscribed to The Tech Grid Series newsletter.</p>
+                      <p><a href="https://techgrid-server-9zjv.onrender.com/unsubscribe?email=${subscriber.email}" style="color: #2b3eb3;">Unsubscribe</a></p>
+                    </div>
+                  </body>
+                </html>
+              `
+            };
+            
+            await emailService.transporter.sendMail(mailOptions);
+            return { success: true, email: subscriber.email, attempts: attempt };
+          } catch (error) {
+            lastError = error;
+            logger.error(`Attempt ${attempt}/${maxRetries} failed for ${subscriber.email}:`, error.message);
+            
+            // Wait before retry (exponential backoff)
+            if (attempt < maxRetries) {
+              await new Promise(resolve => setTimeout(resolve, attempt * 3000));
+            }
+          }
         }
+        
+        return { success: false, email: subscriber.email, error: lastError.message, attempts: maxRetries };
       });
       
       // Wait for all emails in this batch to complete

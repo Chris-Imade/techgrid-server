@@ -28,12 +28,18 @@ class EmailService {
           // Do not fail on invalid certs
           rejectUnauthorized: false
         },
-        connectionTimeout: 60000, // 60 seconds - longer timeout
-        greetingTimeout: 60000, // 60 seconds - longer timeout
-        socketTimeout: 120000, // 120 seconds - much longer timeout
+        connectionTimeout: 120000, // 120 seconds - very long timeout for production
+        greetingTimeout: 120000, // 120 seconds - very long timeout
+        socketTimeout: 180000, // 180 seconds - extra long timeout
+        // Production-specific settings
+        requireTLS: false, // Don't require TLS if it causes issues
+        ignoreTLS: false, // But try to use TLS if available
         // Add retry logic
-        retryDelay: 3000, // 3 seconds between retries
-        maxRetries: 2 // Retry failed connections
+        retryDelay: 5000, // 5 seconds between retries
+        maxRetries: 3, // More retry attempts for production
+        // Additional production settings
+        debug: process.env.NODE_ENV === 'development', // Enable debug in dev only
+        logger: process.env.NODE_ENV === 'development' // Enable logging in dev only
       });
 
       logger.info('Email transporter initialized successfully');
