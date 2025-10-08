@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechGrid Series - AI & Finance Conference</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --techgrid-blue: #2b3eb3;
+            --techgrid-green: #063306;
+            --techgrid-light-green: #13cb13;
+            --techgrid-dark-green: #010b01;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--techgrid-blue) 0%, var(--techgrid-green) 100%);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            z-index: 2;
+            max-width: 800px;
+            padding: 2rem;
+        }
+
+        .logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 2rem;
+            filter: brightness(0) invert(1);
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .hero-description {
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        .btn-custom {
+            background: linear-gradient(45deg, var(--techgrid-light-green), var(--techgrid-green));
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(19, 203, 19, 0.3);
+        }
+
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(19, 203, 19, 0.4);
+            color: white;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--techgrid-light-green);
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .animated-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .floating-shape {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .shape-1 {
+            width: 100px;
+            height: 100px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape-2 {
+            width: 150px;
+            height: 150px;
+            top: 60%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .shape-3 {
+            width: 80px;
+            height: 80px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .api-info {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 2rem;
+            border-radius: 15px;
+            margin-top: 3rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .endpoint {
+            display: flex;
+            align-items: center;
+            margin: 0.5rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .method {
+            background: var(--techgrid-light-green);
+            color: var(--techgrid-dark-green);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            margin-right: 1rem;
+            font-weight: bold;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .method.post { background: #ffc107; color: #000; }
+        .method.get { background: #17a2b8; color: #fff; }
+
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.5rem; }
+            .hero-subtitle { font-size: 1.2rem; }
+            .features { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-section">
+        <div class="animated-bg">
+            <div class="floating-shape shape-1"></div>
+            <div class="floating-shape shape-2"></div>
+            <div class="floating-shape shape-3"></div>
+        </div>
+        
+        <div class="hero-content">
+            <img src="/assets/logo-white.png" alt="TechGrid Logo" class="logo" onerror="this.style.display='none'">
+            
+            <h1 class="hero-title">TechGrid Series</h1>
+            <p class="hero-subtitle">AI & Finance Conference Platform</p>
+            <p class="hero-description">
+                Welcome to the TechGrid Series API Server - powering the future of AI-driven financial technology conferences. 
+                Connect, register, and engage with cutting-edge fintech innovations.
+            </p>
+            
+            <a href="/auth" class="btn-custom">
+                <i class="bi bi-speedometer2"></i> Access Dashboard
+            </a>
+
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-person-plus"></i>
+                    </div>
+                    <div class="feature-title">Registration System</div>
+                    <p>Seamless event registration with automated confirmation emails and attendee management.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-envelope"></i>
+                    </div>
+                    <div class="feature-title">Newsletter Platform</div>
+                    <p>Comprehensive newsletter management with subscriber tracking and bulk email capabilities.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-chat-dots"></i>
+                    </div>
+                    <div class="feature-title">Contact Management</div>
+                    <p>Professional contact handling with direct email replies and status tracking.</p>
+                </div>
+            </div>
+
+            <div class="api-info">
+                <h4><i class="bi bi-code-slash"></i> API Endpoints</h4>
+                <div class="endpoint">
+                    <span class="method post">POST</span>
+                    <span>/api/register - Event registration</span>
+                </div>
+                <div class="endpoint">
+                    <span class="method post">POST</span>
+                    <span>/api/contact - Contact form submission</span>
+                </div>
+                <div class="endpoint">
+                    <span class="method post">POST</span>
+                    <span>/api/newsletter - Newsletter subscription</span>
+                </div>
+                <div class="endpoint">
+                    <span class="method get">GET</span>
+                    <span>/health - Server health check</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

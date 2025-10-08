@@ -19,8 +19,23 @@ const upload = multer({
   }
 });
 
-// Dashboard home page
-router.get('/', (req, res) => {
+// Simple session middleware
+const checkAuth = (req, res, next) => {
+  const isLoggedIn = req.session && req.session.loggedIn;
+  if (!isLoggedIn) {
+    // If it's an API request, return JSON error
+    if (req.path.startsWith('/api/') || req.headers.accept?.includes('application/json')) {
+      return res.status(401).json({ success: false, message: 'Authentication required' });
+    }
+    // Otherwise redirect to auth page
+    return res.redirect('/auth');
+  }
+  next();
+};
+
+
+// Dashboard home page (protected)
+router.get('/', checkAuth, (req, res) => {
   res.sendFile(path.join(__dirname, '../public/dashboard/index.html'));
 });
 

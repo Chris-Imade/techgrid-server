@@ -9,12 +9,8 @@ const newsletterSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: [true, 'Email is required'],
     trim: true,
-    lowercase: true,
-    unique: true,
-    maxlength: [255, 'Email cannot exceed 255 characters'],
-    match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Please provide a valid email']
+    lowercase: true
   },
   metadata: {
     subscriptionId: {

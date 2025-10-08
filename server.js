@@ -8,6 +8,8 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss');
 const hpp = require('hpp');
 const morgan = require('morgan');
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const path = require('path');
 require('dotenv').config();
 
@@ -16,6 +18,7 @@ const contactRoutes = require('./routes/contact');
 const registrationRoutes = require('./routes/registration');
 const newsletterRoutes = require('./routes/newsletter');
 const dashboardRoutes = require('./routes/dashboard');
+const authRoutes = require('./routes/auth');
 
 // Import middleware
 const errorHandler = require('./middleware/errorHandler');
@@ -43,10 +46,26 @@ app.use(helmet({
 
 // CORS configuration
 app.use(cors({
-  origin: process.env.CORS_ORIGIN === '*' ? true : process.env.CORS_ORIGIN.split(','),
+  origin: process.env.CORS_ORIGIN === '*' ? true : (process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : ['http://localhost:3000']),
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+}));
+
+// Session configuration
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'techgrid-dashboard-secret-key-2025',
+  resave: true,
+  saveUninitialized: true,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/techgrid',
+    touchAfter: 24 * 3600 // lazy session update
+  }),
+  cookie: {
+    secure: false, // Set to false for development
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
 }));
 
 // Body parsing middleware
@@ -101,38 +120,30 @@ app.use('/api/', generalLimiter);
 app.get('/health', (req, res) => {
   res.status(200).json({
     success: true,
-    message: 'Server is running',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV
   });
 });
+
+// Auth routes
+app.use('/auth', authRoutes);
+
+// Dashboard routes
+app.use('/dashboard', dashboardRoutes);
 
 // API routes
 app.use('/api/contact', contactRoutes);
 app.use('/api/register', registrationRoutes);
 app.use('/api/newsletter', newsletterRoutes);
 
-// Dashboard routes
-app.use('/dashboard', dashboardRoutes);
-
 // Serve static assets (logos, images)
 app.use('/assets', express.static(path.join(__dirname, 'public/assets')));
+// Serve static files from public directory
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Root endpoint
+// Root endpoint - serve homepage
 app.get('/', (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: 'Tech Grid Series API Server',
-    version: '1.0.0',
-    documentation: '/api/docs',
-    endpoints: {
-      contact: '/api/contact',
-      registration: '/api/register',
-      newsletter: '/api/newsletter',
-      dashboard: '/dashboard',
-      health: '/health'
-    }
-  });
+  res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
 // 404 handler

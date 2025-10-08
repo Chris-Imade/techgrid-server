@@ -9,36 +9,20 @@ const registrationSchema = new mongoose.Schema({
   },
   firstName: {
     type: String,
-    required: [true, 'First name is required'],
-    trim: true,
-    minlength: [2, 'First name must be at least 2 characters'],
-    maxlength: [50, 'First name cannot exceed 50 characters'],
-    match: [/^[a-zA-Z\s'-]+$/, 'First name contains invalid characters']
+    trim: true
   },
   lastName: {
     type: String,
-    required: [true, 'Last name is required'],
-    trim: true,
-    minlength: [2, 'Last name must be at least 2 characters'],
-    maxlength: [50, 'Last name cannot exceed 50 characters'],
-    match: [/^[a-zA-Z\s'-]+$/, 'Last name contains invalid characters']
+    trim: true
   },
   email: {
     type: String,
-    required: [true, 'Email is required'],
     trim: true,
-    lowercase: true,
-    unique: true,
-    maxlength: [255, 'Email cannot exceed 255 characters'],
-    match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Please provide a valid email']
+    lowercase: true
   },
   phone: {
     type: String,
-    required: [true, 'Phone number is required'],
-    trim: true,
-    minlength: [10, 'Phone number must be at least 10 characters'],
-    maxlength: [20, 'Phone number cannot exceed 20 characters'],
-    match: [/^[\+]?[1-9][\d]{0,15}$/, 'Please provide a valid phone number']
+    trim: true
   },
   company: {
     type: String,

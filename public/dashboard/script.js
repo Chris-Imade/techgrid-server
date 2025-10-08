@@ -1564,6 +1564,45 @@ function hideBulkEmailProgress() {
     }
 }
 
+// Authentication functions
+async function logout() {
+    try {
+        const response = await fetch('/auth/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Clear any client-side session data
+            sessionStorage.clear();
+            localStorage.clear();
+            
+            // Show success message and redirect
+            if (window.dashboard) {
+                window.dashboard.showSuccess('Logged out successfully!', 'Goodbye');
+            }
+            
+            setTimeout(() => {
+                window.location.href = '/auth';
+            }, 1000);
+        } else {
+            console.error('Logout failed:', data.message);
+            if (window.dashboard) {
+                window.dashboard.showError('Failed to logout. Please try again.', 'Logout Error');
+            }
+        }
+    } catch (error) {
+        console.error('Logout error:', error);
+        if (window.dashboard) {
+            window.dashboard.showError('Network error during logout.', 'Connection Error');
+        }
+    }
+}
+
 // Initialize dashboard when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     window.dashboard = new TechGridDashboard();
@@ -1593,4 +1632,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.showBulkEmailProgress = showBulkEmailProgress;
     window.updateBulkEmailProgress = updateBulkEmailProgress;
     window.hideBulkEmailProgress = hideBulkEmailProgress;
+    
+    // Authentication functions
+    window.logout = logout;
 });
