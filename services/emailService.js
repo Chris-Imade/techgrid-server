@@ -6,13 +6,12 @@ const logger = require('../utils/logger');
 
 class EmailService {
   constructor() {
-    this.transporter = null;
     this.initializeTransporter();
   }
 
   initializeTransporter() {
     try {
-      this.transporter = nodemailer.createTransport({
+      this.transporter = nodemailer.createTransporter({
         host: process.env.SMTP_HOST,
         port: parseInt(process.env.SMTP_PORT),
         secure: process.env.SMTP_SECURE === 'true', // false for 587, true for 465
@@ -20,10 +19,18 @@ class EmailService {
           user: process.env.SMTP_USER,
           pass: process.env.SMTP_PASS
         },
+        pool: true, // Enable connection pooling
+        maxConnections: 5, // Limit concurrent connections
+        maxMessages: 100, // Messages per connection
+        rateDelta: 1000, // 1 second
+        rateLimit: 5, // Max 5 emails per second
         tls: {
           // Do not fail on invalid certs
           rejectUnauthorized: false
-        }
+        },
+        connectionTimeout: 30000, // 30 seconds
+        greetingTimeout: 30000, // 30 seconds
+        socketTimeout: 60000 // 60 seconds
       });
 
       logger.info('Email transporter initialized successfully');
@@ -41,6 +48,14 @@ class EmailService {
     } catch (error) {
       logger.error('SMTP connection verification failed:', error);
       return false;
+    }
+  }
+
+  // Close the transporter pool
+  closePool() {
+    if (this.transporter) {
+      this.transporter.close();
+      logger.info('Email transporter pool closed');
     }
   }
 

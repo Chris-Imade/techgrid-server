@@ -1039,36 +1039,63 @@ router.post('/api/newsletter/bulk-email', async (req, res) => {
     let sent = 0;
     let failed = 0;
     
-    // Send emails
-    for (const subscriber of subscribers) {
-      try {
-        const mailOptions = {
-          from: `"The Tech Grid Series" <${process.env.FROM_EMAIL}>`,
-          to: subscriber.email,
-          subject: subject,
-          html: `
-            <html>
-              <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto;">
-                <div style="background: linear-gradient(135deg, #2b3eb3 0%, #063306 100%); padding: 20px; text-align: center;">
-                  <h1 style="color: white; margin: 0;">The Tech Grid Series</h1>
-                </div>
-                <div style="padding: 30px; background: #f8f9fa;">
-                  ${body}
-                </div>
-                <div style="padding: 20px; text-align: center; background: #e9ecef; font-size: 0.9rem; color: #6c757d;">
-                  <p>You're receiving this because you subscribed to The Tech Grid Series newsletter.</p>
-                  <p><a href="https://techgrid-server-9zjv.onrender.com/unsubscribe?email=${subscriber.email}" style="color: #2b3eb3;">Unsubscribe</a></p>
-                </div>
-              </body>
-            </html>
-          `
-        };
-        
-        await emailService.transporter.sendMail(mailOptions);
-        sent++;
-      } catch (error) {
-        failed++;
-        logger.error(`Failed to send to ${subscriber.email}:`, error);
+    // Process emails in batches concurrently (smaller batches for better performance)
+    const BATCH_SIZE = subscribers.length <= 20 ? subscribers.length : 5;
+    const batches = [];
+    
+    for (let i = 0; i < subscribers.length; i += BATCH_SIZE) {
+      batches.push(subscribers.slice(i, i + BATCH_SIZE));
+    }
+    
+    // Process each batch concurrently
+    for (const batch of batches) {
+      const emailPromises = batch.map(async (subscriber) => {
+        try {
+          const mailOptions = {
+            from: `"The Tech Grid Series" <${process.env.FROM_EMAIL}>`,
+            to: subscriber.email,
+            subject: subject,
+            html: `
+              <html>
+                <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto;">
+                  <div style="background: linear-gradient(135deg, #2b3eb3 0%, #063306 100%); padding: 20px; text-align: center;">
+                    <h1 style="color: white; margin: 0;">The Tech Grid Series</h1>
+                  </div>
+                  <div style="padding: 30px; background: #f8f9fa;">
+                    ${body}
+                  </div>
+                  <div style="padding: 20px; text-align: center; background: #e9ecef; font-size: 0.9rem; color: #6c757d;">
+                    <p>You're receiving this because you subscribed to The Tech Grid Series newsletter.</p>
+                    <p><a href="https://techgrid-server-9zjv.onrender.com/unsubscribe?email=${subscriber.email}" style="color: #2b3eb3;">Unsubscribe</a></p>
+                  </div>
+                </body>
+              </html>
+            `
+          };
+          
+          await emailService.transporter.sendMail(mailOptions);
+          return { success: true, email: subscriber.email };
+        } catch (error) {
+          logger.error(`Failed to send to ${subscriber.email}:`, error);
+          return { success: false, email: subscriber.email, error: error.message };
+        }
+      });
+      
+      // Wait for all emails in this batch to complete
+      const results = await Promise.allSettled(emailPromises);
+      
+      // Count results
+      results.forEach(result => {
+        if (result.status === 'fulfilled' && result.value.success) {
+          sent++;
+        } else {
+          failed++;
+        }
+      });
+      
+      // Small delay between batches only for large batches
+      if (subscribers.length > 20 && batches.indexOf(batch) < batches.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, 500));
       }
     }
     
