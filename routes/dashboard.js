@@ -1057,7 +1057,7 @@ router.post('/api/newsletter/bulk-email', async (req, res) => {
                 </div>
                 <div style="padding: 20px; text-align: center; background: #e9ecef; font-size: 0.9rem; color: #6c757d;">
                   <p>You're receiving this because you subscribed to The Tech Grid Series newsletter.</p>
-                  <p><a href="${process.env.FRONTEND_URL || 'https://surfspotonline.com'}/unsubscribe?email=${subscriber.email}" style="color: #2b3eb3;">Unsubscribe</a></p>
+                  <p><a href="https://techgrid-server-9zjv.onrender.com/unsubscribe?email=${subscriber.email}" style="color: #2b3eb3;">Unsubscribe</a></p>
                 </div>
               </body>
             </html>
@@ -1129,7 +1129,7 @@ router.post('/api/newsletter/bulk-email-stream', upload.array('attachments', 5),
                 </div>
                 <div style="padding: 20px; text-align: center; background: #e9ecef; font-size: 0.9rem; color: #6c757d;">
                   <p>You're receiving this because you subscribed to The Tech Grid Series newsletter.</p>
-                  <p><a href="${process.env.FRONTEND_URL || 'https://surfspotonline.com'}/unsubscribe?email=${subscriber.email}" style="color: #2b3eb3;">Unsubscribe</a></p>
+                  <p><a href="https://techgrid-server-9zjv.onrender.com/unsubscribe?email=${subscriber.email}" style="color: #2b3eb3;">Unsubscribe</a></p>
                 </div>
               </body>
             </html>
@@ -1197,7 +1197,7 @@ router.post('/api/newsletter/bulk-email-retry', async (req, res) => {
                 </div>
                 <div style="padding: 20px; text-align: center; background: #e9ecef; font-size: 0.9rem; color: #6c757d;">
                   <p>You're receiving this because you subscribed to The Tech Grid Series newsletter.</p>
-                  <p><a href="${process.env.FRONTEND_URL || 'https://surfspotonline.com'}/unsubscribe?email=${email}" style="color: #2b3eb3;">Unsubscribe</a></p>
+                  <p><a href="https://techgrid-server-9zjv.onrender.com/unsubscribe?email=${email}" style="color: #2b3eb3;">Unsubscribe</a></p>
                 </div>
               </body>
             </html>

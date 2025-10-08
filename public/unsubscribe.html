@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unsubscribe - TechGrid Series</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --techgrid-blue: #2b3eb3;
+            --techgrid-green: #063306;
+            --techgrid-light-green: #13cb13;
+            --techgrid-dark-green: #010b01;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--techgrid-blue) 0%, var(--techgrid-green) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .unsubscribe-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 500px;
+            width: 100%;
+            margin: 2rem;
+            text-align: center;
+        }
+
+        .logo {
+            width: 80px;
+            height: auto;
+            display: block;
+            margin: 0 auto 2rem;
+        }
+
+        .unsubscribe-title {
+            color: var(--techgrid-blue);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .unsubscribe-subtitle {
+            color: #6c757d;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        .btn-unsubscribe {
+            background: linear-gradient(45deg, #dc3545, #c82333);
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            color: white;
+            width: 100%;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .btn-unsubscribe:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.3);
+            color: white;
+        }
+
+        .btn-cancel {
+            background: linear-gradient(45deg, var(--techgrid-blue), var(--techgrid-green));
+            border: none;
+            padding: 12px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            color: white;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(43, 62, 179, 0.3);
+            color: white;
+        }
+
+        .success-message, .error-message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .success-message {
+            background: linear-gradient(45deg, var(--techgrid-light-green), var(--techgrid-green));
+            color: white;
+        }
+
+        .error-message {
+            background: linear-gradient(45deg, #dc3545, #c82333);
+            color: white;
+        }
+
+        .loading-spinner {
+            display: none;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="unsubscribe-container">
+        <img src="/assets/logo.png" alt="TechGrid Logo" class="logo" onerror="this.style.display='none'">
+        
+        <h1 class="unsubscribe-title">Unsubscribe</h1>
+        <p class="unsubscribe-subtitle">We're sorry to see you go! Are you sure you want to unsubscribe from The Tech Grid Series newsletter?</p>
+
+        <div id="success-message" class="success-message">
+            <i class="bi bi-check-circle"></i>
+            <span>You have been successfully unsubscribed from our newsletter.</span>
+        </div>
+
+        <div id="error-message" class="error-message">
+            <i class="bi bi-exclamation-triangle"></i>
+            <span id="error-text">An error occurred. Please try again.</span>
+        </div>
+
+        <div id="unsubscribe-form">
+            <button type="button" class="btn btn-unsubscribe" id="unsubscribe-btn">
+                <span class="loading-spinner">
+                    <i class="bi bi-arrow-clockwise spinner"></i>
+                </span>
+                <i class="bi bi-person-x"></i>
+                Yes, Unsubscribe Me
+            </button>
+
+            <button type="button" class="btn btn-cancel" onclick="window.location.href='/'">
+                <i class="bi bi-arrow-left"></i>
+                Cancel & Keep Subscription
+            </button>
+        </div>
+
+        <div style="margin-top: 2rem; font-size: 0.9rem; color: #6c757d;">
+            <p>You can always resubscribe later by visiting our website.</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const email = urlParams.get('email');
+            const token = urlParams.get('token');
+            
+            const unsubscribeBtn = document.getElementById('unsubscribe-btn');
+            const successMessage = document.getElementById('success-message');
+            const errorMessage = document.getElementById('error-message');
+            const loadingSpinner = document.querySelector('.loading-spinner');
+            const unsubscribeForm = document.getElementById('unsubscribe-form');
+
+            if (!email && !token) {
+                document.getElementById('error-text').textContent = 'Invalid unsubscribe link. Please contact support.';
+                errorMessage.style.display = 'block';
+                unsubscribeForm.style.display = 'none';
+                return;
+            }
+
+            unsubscribeBtn.addEventListener('click', async function() {
+                // Show loading state
+                unsubscribeBtn.disabled = true;
+                loadingSpinner.style.display = 'inline-block';
+
+                try {
+                    let url = '/api/newsletter/unsubscribe?';
+                    if (email) {
+                        url += `email=${encodeURIComponent(email)}`;
+                    } else if (token) {
+                        url += `token=${encodeURIComponent(token)}`;
+                    }
+
+                    const response = await fetch(url, {
+                        method: 'GET'
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        successMessage.style.display = 'block';
+                        unsubscribeForm.style.display = 'none';
+                    } else {
+                        document.getElementById('error-text').textContent = data.message || 'Failed to unsubscribe. Please try again.';
+                        errorMessage.style.display = 'block';
+                    }
+                } catch (error) {
+                    console.error('Unsubscribe error:', error);
+                    document.getElementById('error-text').textContent = 'Network error. Please try again.';
+                    errorMessage.style.display = 'block';
+                } finally {
+                    // Hide loading state
+                    unsubscribeBtn.disabled = false;
+                    loadingSpinner.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

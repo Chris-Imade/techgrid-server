@@ -320,7 +320,7 @@ class EmailService {
       const template = this.loadTemplate('newsletter_welcome');
       const html = template({
         email: subscriberData.email,
-        unsubscribeUrl: `${process.env.APP_URL}/api/newsletter/unsubscribe?token=${subscriberData.subscriptionId}`,
+        unsubscribeUrl: `https://techgrid-server-9zjv.onrender.com/unsubscribe?token=${subscriberData.subscriptionId}`,
         timestamp: new Date().toLocaleString()
       });
 

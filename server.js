@@ -146,6 +146,11 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
+// Unsubscribe page
+app.get('/unsubscribe', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/unsubscribe.html'));
+});
+
 // 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({
