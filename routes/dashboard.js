@@ -1026,14 +1026,42 @@ router.post('/api/newsletter/bulk-email', async (req, res) => {
   try {
     const { subject, body } = req.body;
     
-    // Get all active subscribers
-    const subscribers = await Newsletter.find({ 
+    // Debug: Get all subscribers first
+    console.log('Fetching subscribers...');
+    const allSubscribers = await Newsletter.find({}).select('email isActive metadata.status');
+    console.log('All subscribers:', allSubscribers.map(s => ({ email: s.email, isActive: s.isActive, status: s.metadata?.status })));
+    
+    // Get all active subscribers (try with more flexible query)
+    let subscribers = await Newsletter.find({ 
       isActive: true,
       'metadata.status': 'subscribed'
     }).select('email');
     
+    console.log('Active subscribers found:', subscribers.length);
+    
+    // If no subscribers with exact status, try just active ones
     if (subscribers.length === 0) {
-      return res.status(400).json({ success: false, message: 'No active subscribers' });
+      console.log('No subscribers with status "subscribed", trying active only...');
+      subscribers = await Newsletter.find({ isActive: true }).select('email');
+      console.log('Active only subscribers found:', subscribers.length);
+    }
+    
+    // If still no subscribers, try all subscribers
+    if (subscribers.length === 0) {
+      console.log('No active subscribers, trying all subscribers...');
+      subscribers = await Newsletter.find({}).select('email');
+      console.log('All subscribers found:', subscribers.length);
+    }
+    
+    if (subscribers.length === 0) {
+      // Try with just isActive: true
+      const activeOnly = await Newsletter.find({ isActive: true }).select('email metadata.status');
+      console.log('Active only subscribers:', activeOnly.map(s => ({ email: s.email, status: s.metadata?.status })));
+      
+      return res.status(400).json({ 
+        success: false, 
+        message: `No active subscribers found. Total subscribers: ${allSubscribers.length}, Active: ${activeOnly.length}` 
+      });
     }
     
     let sent = 0;
