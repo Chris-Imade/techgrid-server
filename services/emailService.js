@@ -20,17 +20,20 @@ class EmailService {
           pass: process.env.SMTP_PASS
         },
         pool: true, // Enable connection pooling
-        maxConnections: 5, // Limit concurrent connections
-        maxMessages: 100, // Messages per connection
-        rateDelta: 1000, // 1 second
-        rateLimit: 5, // Max 5 emails per second
+        maxConnections: 2, // Reduce concurrent connections to avoid timeouts
+        maxMessages: 50, // Reduce messages per connection
+        rateDelta: 2000, // 2 seconds between rate limit checks
+        rateLimit: 3, // Max 3 emails per 2 seconds (slower but more reliable)
         tls: {
           // Do not fail on invalid certs
           rejectUnauthorized: false
         },
-        connectionTimeout: 30000, // 30 seconds
-        greetingTimeout: 30000, // 30 seconds
-        socketTimeout: 60000 // 60 seconds
+        connectionTimeout: 60000, // 60 seconds - longer timeout
+        greetingTimeout: 60000, // 60 seconds - longer timeout
+        socketTimeout: 120000, // 120 seconds - much longer timeout
+        // Add retry logic
+        retryDelay: 3000, // 3 seconds between retries
+        maxRetries: 2 // Retry failed connections
       });
 
       logger.info('Email transporter initialized successfully');

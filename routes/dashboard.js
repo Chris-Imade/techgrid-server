@@ -1026,49 +1026,34 @@ router.post('/api/newsletter/bulk-email', async (req, res) => {
   try {
     const { subject, body } = req.body;
     
-    // Debug: Get all subscribers first
-    console.log('Fetching subscribers...');
-    const allSubscribers = await Newsletter.find({}).select('email isActive metadata.status');
-    console.log('All subscribers:', allSubscribers.map(s => ({ email: s.email, isActive: s.isActive, status: s.metadata?.status })));
-    
-    // Get all active subscribers (try with more flexible query)
+    // Get all active subscribers
     let subscribers = await Newsletter.find({ 
       isActive: true,
       'metadata.status': 'subscribed'
     }).select('email');
     
-    console.log('Active subscribers found:', subscribers.length);
-    
     // If no subscribers with exact status, try just active ones
     if (subscribers.length === 0) {
-      console.log('No subscribers with status "subscribed", trying active only...');
       subscribers = await Newsletter.find({ isActive: true }).select('email');
-      console.log('Active only subscribers found:', subscribers.length);
     }
     
     // If still no subscribers, try all subscribers
     if (subscribers.length === 0) {
-      console.log('No active subscribers, trying all subscribers...');
       subscribers = await Newsletter.find({}).select('email');
-      console.log('All subscribers found:', subscribers.length);
     }
     
     if (subscribers.length === 0) {
-      // Try with just isActive: true
-      const activeOnly = await Newsletter.find({ isActive: true }).select('email metadata.status');
-      console.log('Active only subscribers:', activeOnly.map(s => ({ email: s.email, status: s.metadata?.status })));
-      
       return res.status(400).json({ 
         success: false, 
-        message: `No active subscribers found. Total subscribers: ${allSubscribers.length}, Active: ${activeOnly.length}` 
+        message: 'No active subscribers found' 
       });
     }
     
     let sent = 0;
     let failed = 0;
     
-    // Process emails in batches concurrently (smaller batches for better performance)
-    const BATCH_SIZE = subscribers.length <= 20 ? subscribers.length : 5;
+    // Process emails in smaller batches to avoid SMTP timeouts
+    const BATCH_SIZE = subscribers.length <= 10 ? 2 : 3;
     const batches = [];
     
     for (let i = 0; i < subscribers.length; i += BATCH_SIZE) {
@@ -1121,9 +1106,9 @@ router.post('/api/newsletter/bulk-email', async (req, res) => {
         }
       });
       
-      // Small delay between batches only for large batches
-      if (subscribers.length > 20 && batches.indexOf(batch) < batches.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, 500));
+      // Add delay between all batches to avoid overwhelming SMTP server
+      if (batches.indexOf(batch) < batches.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, 2000)); // 2 second delay
       }
     }
     
